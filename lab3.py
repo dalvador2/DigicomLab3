@@ -52,13 +52,14 @@ class map_track:
         
 
 
-interim_plots = False
+interim_plots = True
 m = 64
 n = qam_bases(m)
 print(n)
-modulations = [komm.PSKModulation(2),komm.PSKModulation(4,phase_offset=np.pi/4)] + [(komm.QAModulation(16*2**(2*n),qam_bases(16*2**(2*n)))) for n in range(3)]
+modulations = [komm.PSKModulation(2),komm.PSKModulation(4,phase_offset=np.pi/4)]\
+    + [(komm.QAModulation(16*2**(2*n),qam_bases(16*2**(2*n)))) for n in range(3)]
 print(modulations)
-tx_im = Image.open("imsend-10.pgm")
+tx_im = Image.open("imsend-5.pgm")
 Npixels = tx_im.size[1]*tx_im.size[0]
 plt.figure()
 plt.imshow(np.array(tx_im),cmap="gray",vmin=0,vmax=255)
@@ -93,13 +94,14 @@ for mod in modulations:
         rx_im = np.packbits(rx_bin_raw).reshape(tx_im.size[1],tx_im.size[0])
         if interim_plots:
             fig = plt.figure()
-            timer = fig.canvas.new_timer(interval = 500)
+            timer = fig.canvas.new_timer(interval = 300)
             timer.add_callback(close_event)
             timer.start()
             plt.imshow(np.array(rx_im),cmap="gray",vmin=0,vmax=255)
             plt.figure()
             plt.axes().set_aspect("equal")
             plt.scatter(rx_data[:100000].real,rx_data[:100000].imag,s=1,marker=".")
+            plt.savefig(f"figs/{repr(mod)}-{i}.png")
             plt.show()
 
     ber_mods.append(ber_ray)
